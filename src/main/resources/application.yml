@@ -1,0 +1,13 @@
+spring:
+  member-datasource:
+    jdbc-url: jdbc:h2:mem:memberdb
+    username: sa
+    password:
+    idle-timeout: 0
+    maximum-pool-size: 10
+  order-datasource:
+    jdbc-url: jdbc:h2:mem:orderdb
+    username: sa
+    password:
+    idle-timeout: 0
+    maximum-pool-size: 10
