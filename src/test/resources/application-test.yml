@@ -1,0 +1,7 @@
+spring:
+  profiles:
+    active: test
+  datasource:
+    jdbc-url: jdbc:h2:mem:memberdb
+    username: sa
+    password:
