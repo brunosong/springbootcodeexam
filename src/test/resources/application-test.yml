@@ -1,7 +1,21 @@
 spring:
   profiles:
     active: test
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+    show_sql: true
+    generate-ddl: true
+
   datasource:
-    jdbc-url: jdbc:h2:mem:memberdb
+    url: jdbc:h2:mem:testdb
     username: sa
     password:
+
+logging:
+  level:
+    #org.hibernate.type: trace
+    org.hibernate.sql: debug
