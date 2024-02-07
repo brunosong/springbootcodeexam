@@ -31,8 +31,7 @@ class CodeServiceTest extends DummyObject {
     private ItemMasterCodeRepository masterCodeRepository;
 
     @Test
-    @DisplayName("프로퍼티 업데이트 서비스 테스트")
-    void insertAndUpdateLevelProperty() {
+    void findMasterCodeTest() {
 
         MasterCodeReqDto reqDto1 = new MasterCodeReqDto();
         reqDto1.setMasterCode("USER_GRADE");
