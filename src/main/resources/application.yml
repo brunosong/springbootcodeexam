@@ -18,3 +18,8 @@ logging:
   level:
     #org.hibernate.type: trace
     org.hibernate.sql: debug
+#
+#server:
+#  servlet:
+#    encoding:
+#      charset: UTF-8

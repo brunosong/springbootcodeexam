@@ -16,7 +16,7 @@ import static org.mockito.BDDMockito.given;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ControllerExam1Test {
+public class ControllerBasicExam1Test {
 
     @LocalServerPort
     private int port;
