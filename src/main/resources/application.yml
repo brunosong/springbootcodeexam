@@ -14,12 +14,14 @@ spring:
     password:
 
 
+
 logging:
   level:
     #org.hibernate.type: trace
     org.hibernate.sql: debug
 #
-#server:
-#  servlet:
-#    encoding:
-#      charset: UTF-8
+server:
+  port: 9090
+  servlet:
+    encoding:
+      charset: UTF-8
