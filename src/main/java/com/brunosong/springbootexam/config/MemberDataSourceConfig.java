@@ -1,5 +1,6 @@
 package com.brunosong.springbootexam.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -14,15 +15,25 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 
 @EnableJpaRepositories(
-        basePackages = "com.brunosong.springbootexam.repository.member",
+        basePackages = "com.brunosong.springbootexam.repository.memberms",
         entityManagerFactoryRef = "memberEntityManager",
         transactionManagerRef = "memberJpaTransactionManager"
 )
 @Configuration
 public class MemberDataSourceConfig {
 
+    @Value("${spring.memberms-jpa.database-platform}")
+    private String dialect;
+
+    @Value("${spring.memberms-jpa.properties.hibernate.format_sql}")
+    private boolean isFormatSql;
+
+    @Value("${spring.memberms-jpa.show_sql}")
+    private boolean isShowSql;
+
+
     @Bean
-    @ConfigurationProperties(prefix = "spring.member-datasource")
+    @ConfigurationProperties(prefix = "spring.memberms-datasource")
     public DataSource memberDatasource() {
         return DataSourceBuilder.create().build();
     }
@@ -35,10 +46,13 @@ public class MemberDataSourceConfig {
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 
         HashMap<String, Object> prop = new HashMap<>();
-        prop.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+        prop.put("hibernate.dialect", dialect);
+        prop.put("hibernate.format_sql", isFormatSql);
+        prop.put("hibernate.show_sql", isShowSql);
+
+        /* 이 부분은 예제로 사용을 해야 하기 때문에 넣어뒀다. 실제 환경에서는 쓰면 안된다. */
         prop.put("hibernate.hbm2ddl.auto", "create-drop");
-        prop.put("hibernate.format_sql", true);
-        prop.put("hibernate.show_sql", "true");
+
         em.setJpaPropertyMap(prop);
 
         return em;

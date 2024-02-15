@@ -32,9 +32,9 @@ class DataSourceConfigTest {
     void h2MultiDatasourceConfigCheck() {
 
         HikariDataSource hikariMemberDataSource = (HikariDataSource) memberDatasource;
-        Assertions.assertThat(hikariMemberDataSource.getJdbcUrl()).isEqualTo(env.getProperty("spring.member-datasource.jdbc-url"));
+        Assertions.assertThat(hikariMemberDataSource.getJdbcUrl()).isEqualTo(env.getProperty("spring.memberms-datasource.jdbc-url"));
 
-        Assertions.assertThat(orderDatasource.getJdbcUrl()).isEqualTo(env.getProperty("spring.order-datasource.jdbc-url"));
+        Assertions.assertThat(orderDatasource.getJdbcUrl()).isEqualTo(env.getProperty("spring.orderms-datasource.jdbc-url"));
 
     }
 
