@@ -1,5 +1,8 @@
 package com.brunosong.springbootexam.config;
 
+import com.brunosong.springbootexam.config.properties.MemberMsJpaProperties;
+import com.brunosong.springbootexam.config.properties.OrderMsJpaProperties;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -7,7 +10,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -22,15 +27,6 @@ import java.util.HashMap;
 @Configuration
 public class OrderDataSourceConfig {
 
-    @Value("${spring.orderms-jpa.database-platform}")
-    private String dialect;
-
-    @Value("${spring.orderms-jpa.properties.hibernate.format_sql}")
-    private boolean isFormatSql;
-
-    @Value("${spring.orderms-jpa.show_sql}")
-    private boolean isShowSql;
-
     @Bean
     @ConfigurationProperties(prefix = "spring.orderms-datasource")
     public DataSource orderDatasource() {
@@ -38,30 +34,33 @@ public class OrderDataSourceConfig {
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean orderEntityManager() {
+    public LocalContainerEntityManagerFactoryBean orderEntityManager(
+                                    OrderMsJpaProperties orderMsJpaProperties,
+                                    @Qualifier("orderMsJpaVendorAdapter") JpaVendorAdapter orderMsJpaVendorAdapter) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(orderDatasource());
         em.setPackagesToScan(new String[]{"com.brunosong.springbootexam.entity.order"});
-        em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-
-        HashMap<String, Object> prop = new HashMap<>();
-        prop.put("hibernate.dialect", dialect);
-        prop.put("hibernate.format_sql", isFormatSql);
-        prop.put("hibernate.show_sql", isShowSql);
-
-        /* 이 부분은 예제로 사용을 해야 하기 때문에 넣어뒀다. 실제 환경에서는 쓰면 안된다. */
-        prop.put("hibernate.hbm2ddl.auto", "create-drop");
-
-        em.setJpaPropertyMap(prop);
+        em.setJpaVendorAdapter(orderMsJpaVendorAdapter);
+        em.setJpaPropertyMap(orderMsJpaProperties.getProperties());
 
         return em;
     }
 
     @Bean
-    public PlatformTransactionManager orderJpaTransactionManager() {
+    public PlatformTransactionManager orderJpaTransactionManager(
+                   @Qualifier("orderEntityManager") LocalContainerEntityManagerFactoryBean entityManagerFactoryBean) {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(orderEntityManager().getObject());
+        transactionManager.setEntityManagerFactory(entityManagerFactoryBean.getObject());
         return transactionManager;
+    }
+
+    @Bean
+    public JpaVendorAdapter orderMsJpaVendorAdapter(OrderMsJpaProperties jpaProperties) {
+        AbstractJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
+        jpaVendorAdapter.setShowSql(jpaProperties.isShowSql());
+        jpaVendorAdapter.setDatabasePlatform(jpaProperties.getDatabasePlatform());
+        jpaVendorAdapter.setGenerateDdl(jpaProperties.isGenerateDdl());
+        return jpaVendorAdapter;
     }
 
 }

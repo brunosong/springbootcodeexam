@@ -1,13 +1,18 @@
 package com.brunosong.springbootexam.config;
 
+import com.brunosong.springbootexam.config.properties.MemberMsJpaProperties;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -22,16 +27,6 @@ import java.util.HashMap;
 @Configuration
 public class MemberDataSourceConfig {
 
-    @Value("${spring.memberms-jpa.database-platform}")
-    private String dialect;
-
-    @Value("${spring.memberms-jpa.properties.hibernate.format_sql}")
-    private boolean isFormatSql;
-
-    @Value("${spring.memberms-jpa.show_sql}")
-    private boolean isShowSql;
-
-
     @Bean
     @ConfigurationProperties(prefix = "spring.memberms-datasource")
     public DataSource memberDatasource() {
@@ -39,29 +34,30 @@ public class MemberDataSourceConfig {
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean memberEntityManager() {
+    public LocalContainerEntityManagerFactoryBean memberEntityManager( MemberMsJpaProperties memberMsJpaProperties,
+                                                                       @Qualifier("memberMsJpaVendorAdapter") JpaVendorAdapter memberMsJpaVendorAdapter) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(memberDatasource());
         em.setPackagesToScan(new String[]{"com.brunosong.springbootexam.entity.member"});
-        em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-
-        HashMap<String, Object> prop = new HashMap<>();
-        prop.put("hibernate.dialect", dialect);
-        prop.put("hibernate.format_sql", isFormatSql);
-        prop.put("hibernate.show_sql", isShowSql);
-
-        /* 이 부분은 예제로 사용을 해야 하기 때문에 넣어뒀다. 실제 환경에서는 쓰면 안된다. */
-        prop.put("hibernate.hbm2ddl.auto", "create-drop");
-
-        em.setJpaPropertyMap(prop);
+        em.setJpaVendorAdapter(memberMsJpaVendorAdapter);
+        em.setJpaPropertyMap(memberMsJpaProperties.getProperties());
 
         return em;
     }
 
     @Bean
-    public PlatformTransactionManager memberJpaTransactionManager() {
+    public JpaVendorAdapter memberMsJpaVendorAdapter(MemberMsJpaProperties jpaProperties) {
+        AbstractJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
+        jpaVendorAdapter.setShowSql(jpaProperties.isShowSql());
+        jpaVendorAdapter.setDatabasePlatform(jpaProperties.getDatabasePlatform());
+        jpaVendorAdapter.setGenerateDdl(jpaProperties.isGenerateDdl());
+        return jpaVendorAdapter;
+    }
+
+    @Bean
+    public PlatformTransactionManager memberJpaTransactionManager(@Qualifier("memberEntityManager") LocalContainerEntityManagerFactoryBean memberEntityManager) {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(memberEntityManager().getObject());
+        transactionManager.setEntityManagerFactory(memberEntityManager.getObject());
         return transactionManager;
     }
 
