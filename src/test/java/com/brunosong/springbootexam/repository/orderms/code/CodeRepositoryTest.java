@@ -1,24 +1,18 @@
-package com.brunosong.springbootexam.repository.order.code;
+package com.brunosong.springbootexam.repository.orderms.code;
 
+import com.brunosong.springbootexam.config.annotation.OrderMsDevDbDataJpaTest;
 import com.brunosong.springbootexam.entity.order.code.ItemDetailCode;
 import com.brunosong.springbootexam.entity.order.code.ItemMasterCode;
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@TestPropertySource(properties = {"spring.config.location = classpath:application-test.yml"})
+@OrderMsDevDbDataJpaTest
 class CodeRepositoryTest {
 
     @Autowired
@@ -26,10 +20,6 @@ class CodeRepositoryTest {
 
     @Autowired
     ItemDetailCodeRepository itemDetailCodeRepository;
-
-    @Autowired
-    EntityManager entityManager;
-
 
     @BeforeEach
     void setup() {
@@ -40,6 +30,7 @@ class CodeRepositoryTest {
                 .build();
 
         itemMasterCodeRepository.save(masterEntity1);
+        itemMasterCodeRepository.flush();
 
         ItemDetailCode userTypeItemBronze = ItemDetailCode.builder()
                 .itemCode("BRONZE")
@@ -56,8 +47,7 @@ class CodeRepositoryTest {
         itemDetailCodeRepository.save(userTypeItemBronze);
         itemDetailCodeRepository.save(userTypeItemSilver);
 
-        entityManager.flush();
-        entityManager.clear();
+        itemDetailCodeRepository.flush();
 
     }
 
@@ -70,8 +60,11 @@ class CodeRepositoryTest {
 
         ItemMasterCode itemMasterCode = itemMasterCodeRepository.findByMasterCode(masterCode).get();
         assertThat(itemMasterCode.getMasterCodeName()).isEqualTo("사용자 등급");
-
+        System.out.println("---------------------------------------------------------------------");
         List<ItemDetailCode> itemList = itemMasterCode.getItemList();
+        ItemDetailCode itemDetailCode = itemList.get(0);
+        System.out.println(itemDetailCode.getItemCode());
+        System.out.println("---------------------------------------------------------------------");
         assertThat(itemList.size()).isEqualTo(2);
 
     }
