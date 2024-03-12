@@ -1,23 +1,23 @@
 package com.brunosong.springbootexam.config.dummy;
 
-import com.brunosong.springbootexam.entity.order.code.ItemMasterCode;
+import com.brunosong.springbootexam.codems.repository.ItemMasterCodeEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DummyObject {
 
-    protected List<ItemMasterCode> newItemMasterCodeList() {
+    protected List<ItemMasterCodeEntity> newItemMasterCodeList() {
 
-        List<ItemMasterCode> list = new ArrayList<>();
+        List<ItemMasterCodeEntity> list = new ArrayList<>();
 
-        list.add(ItemMasterCode.builder()
+        list.add(ItemMasterCodeEntity.builder()
                 .masterCodeSeq(1L)
                 .masterCode("USER_GRADE")
                 .masterCodeName("사용자 등급")
                 .build());
 
-        list.add(ItemMasterCode.builder()
+        list.add(ItemMasterCodeEntity.builder()
                 .masterCodeSeq(2L)
                 .masterCode("ORDER_TYPE")
                 .masterCodeName("주문 유형")

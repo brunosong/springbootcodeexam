@@ -1,7 +1,7 @@
 package com.brunosong.springbootexam.controller.example;
 
 
-import com.brunosong.springbootexam.service.example.ServiceBasicExam1;
+import com.brunosong.springbootexam.examms.service.ServiceBasicExam1;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
