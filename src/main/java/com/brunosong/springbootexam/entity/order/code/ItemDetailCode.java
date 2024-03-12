@@ -4,6 +4,7 @@ package com.brunosong.springbootexam.entity.order.code;
 import com.brunosong.springbootexam.entity.order.orderenum.UseYnEnum;
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
@@ -11,6 +12,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
+@Getter
 @Entity
 @Table(name = "item_detail_code")
 @NoArgsConstructor

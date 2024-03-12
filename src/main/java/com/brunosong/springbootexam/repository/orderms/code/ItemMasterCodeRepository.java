@@ -1,4 +1,4 @@
-package com.brunosong.springbootexam.repository.order.code;
+package com.brunosong.springbootexam.repository.orderms.code;
 
 
 import com.brunosong.springbootexam.entity.order.code.ItemMasterCode;
@@ -14,7 +14,5 @@ public interface ItemMasterCodeRepository extends JpaRepository<ItemMasterCode,L
 
     @Query("select m from ItemMasterCode m where m.masterCode in :masterCodeList")
     List<ItemMasterCode> findByMasterCode(List<String> masterCodeList);
-
-
 
 }

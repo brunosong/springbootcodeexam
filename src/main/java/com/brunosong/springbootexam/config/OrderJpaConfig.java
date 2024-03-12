@@ -1,9 +1,7 @@
 package com.brunosong.springbootexam.config;
 
-import com.brunosong.springbootexam.config.properties.MemberMsJpaProperties;
 import com.brunosong.springbootexam.config.properties.OrderMsJpaProperties;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +15,6 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
 
 @EnableJpaRepositories(
         basePackages = "com.brunosong.springbootexam.repository.orderms",
@@ -25,20 +22,15 @@ import java.util.HashMap;
         transactionManagerRef = "orderJpaTransactionManager"
 )
 @Configuration
-public class OrderDataSourceConfig {
-
-    @Bean
-    @ConfigurationProperties(prefix = "spring.orderms-datasource")
-    public DataSource orderDatasource() {
-        return DataSourceBuilder.create().build();
-    }
+public class OrderJpaConfig {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean orderEntityManager(
-                                    OrderMsJpaProperties orderMsJpaProperties,
-                                    @Qualifier("orderMsJpaVendorAdapter") JpaVendorAdapter orderMsJpaVendorAdapter) {
+                                                                    @Qualifier("orderDatasource") DataSource orderDataSource,
+                                                                    OrderMsJpaProperties orderMsJpaProperties,
+                                                                    @Qualifier("orderMsJpaVendorAdapter") JpaVendorAdapter orderMsJpaVendorAdapter ) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-        em.setDataSource(orderDatasource());
+        em.setDataSource(orderDataSource);
         em.setPackagesToScan(new String[]{"com.brunosong.springbootexam.entity.order"});
         em.setJpaVendorAdapter(orderMsJpaVendorAdapter);
         em.setJpaPropertyMap(orderMsJpaProperties.getProperties());

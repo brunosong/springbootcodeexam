@@ -1,4 +1,4 @@
-package com.brunosong.springbootexam.dto.order.code;
+package com.brunosong.springbootexam.dto.orderms.code;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package com.brunosong.springbootexam.repository.order;
+package com.brunosong.springbootexam.repository.orderms;
 
 import com.brunosong.springbootexam.entity.order.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
